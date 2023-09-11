@@ -1,5 +1,5 @@
 resource "aws_instance" "my-machine" {
-  count = 4     
+  count = 2   
   ami = var.ami
   instance_type = var.instance_type
   tags = {
