@@ -1,7 +1,5 @@
-FROM tomcat:8.0-alpine
-LABEL "intellipaat project”
+FROM Apache2 
+LABEL "intellipaat project2”
 # COPY path-to-your-application-war path-to-webapps-in-docker-tomcat
-COPY tomcat-users.xml /usr/local/tomcat/conf/
-COPY target/website.war /usr/local/tomcat/webapps/
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+ADD . /var/www/html
+
