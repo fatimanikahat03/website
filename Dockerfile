@@ -1,5 +1,5 @@
-FROM Apache2 
-LABEL "intellipaat project2”
-# COPY path-to-your-application-war path-to-webapps-in-docker-tomcat
+FROM ubuntu
+RUN apt update
+RUN apt install apache2 -y
 ADD . /var/www/html
-
+ENTRYPOINT apachectl -D FOREGROUND
