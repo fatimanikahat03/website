@@ -1,0 +1,19 @@
+apiVersion: apps/v2
+kind: Deployment
+metadata:
+  name: project2-deployment
+spec:
+  selector:
+    matchLabels:
+      app: project2
+  replicas: 3 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: project2
+    spec:
+      containers:
+      - name: project2
+        image: nikahat/project2
+        ports:
+        - containerPort: 80
