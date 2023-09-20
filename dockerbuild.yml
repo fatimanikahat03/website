@@ -1,0 +1,7 @@
+---
+- hosts: worker0
+  remote_user: root
+  tasks:
+    - name: ensure Docker image is built
+      script: docker.sh
+      
