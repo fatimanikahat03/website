@@ -1,0 +1,52 @@
+---
+- hosts: controller
+  become: true
+  name: Installing Required Softwares in Controller
+  vars:
+    password: password
+  tasks:
+    - name: Installing Java
+      ansible.builtin.apt:
+        name: openjdk-8-jdk
+        state: latest
+        update_cache: yes
+        install_recommends: yes
+          
+    - name: Add Jenkins GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        state: present 
+
+    - name: Configuring Jenkins repository
+      ansible.builtin.apt_repository: 
+        repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+        state: present
+
+    - name: Ensure jenkins is installed
+      ansible.builtin.apt: 
+        name: jenkins 
+        update_cache: yes
+        state: latest
+
+    - name: Enabling jenkins service
+      ansible.builtin.service:
+        name: jenkins
+        enabled: yes
+        state: started
+    
+    - name: Making jenkins directory
+      ansible.builtin.file:
+        path: /var/lib/jenkins/.ssh
+        owner: jenkins
+        group: jenkins
+        state: directory
+        mode: 0777
+    
+    - name: Creating known_hosts file
+      ansible.builtin.file:
+        path: /var/lib/jenkins/.ssh/known_hosts
+        state: touch
+        mode: 0700
+        owner: jenkins
+        group: jenkins
+      run_once: true
