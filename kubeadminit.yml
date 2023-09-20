@@ -1,0 +1,34 @@
+---
+- hosts: worker2
+  remote_user: root
+  tasks:
+   - name: Intilizing Kubernetes Cluster
+     command: kubeadm init 
+     run_once: true
+     delegate_to: 34.203.193.96
+   -  name: Create directory for kube config.
+      file: 
+       path: $HOME/.kube
+   - name: Copy /etc/kubernetes/admin.conf $HOME/.kube/config
+     copy:
+       src: /etc/kubernetes/admin.conf
+       dest: $HOME/.kube/config
+       remote_src: yes
+   - pause: seconds=10
+   - name: Remove the cache directory.
+     file: 
+       path: $HOME/.kube/cache
+       state: absent
+
+   - name: Create Pod Network & RBAC.
+     with_items: 
+        - kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yml
+   - pause: seconds=30
+   - name: Get the token for joining the nodes with Kuberentes master.
+     shell: kubeadm token create  --print-join-command
+     register: kubernetes_join_command
+   - debug:
+       msg: "{{ kubernetes_join_command.stdout }}"
+   - name: Copy join command to local file.
+     local_action: copy content="{{ kubernetes_join_command.stdout_lines[0] }}" dest="/tmp/kubernetes_join_command" mode=0777
+...
